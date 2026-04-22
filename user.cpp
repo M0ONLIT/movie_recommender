@@ -10,7 +10,7 @@ int User::getId() const { return id; }
 std::string User::getName() const { return name; }
 std::string User::getEmail() const { return email; }
 
-void User::display() {
+std::ostream& operator<<(std::ostream& os, const User& user){
     std::cout << "사용자의 ID: " << id << '\n';
     std::cout << "사용자의 이름: " << name << '\n';
     std::cout << "사용자의 email: " << email << '\n';
