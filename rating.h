@@ -12,5 +12,5 @@ public:
     int getUserId() const;
     int getMovieId() const;
     double getScore() const;
-    void display();
+    friend std::ostream& operator<<(std::ostream& os, const Rating& rating);
 };

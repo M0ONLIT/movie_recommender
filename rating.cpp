@@ -18,9 +18,9 @@ int Rating::getUserId() const { return userId; }
 int Rating::getMovieId() const { return movieId; }
 double Rating::getScore() const { return score; }
 
-// 정보 출력 함수
-void Rating::display() {
-    std::cout << "[평가 정보] 사용자ID: " << userId 
-              << " | 영화ID: " << movieId 
-              << " | 평점: " << score << "/5.0" << std::endl;
+std::ostream& operator<<(std::ostream& os, const Rating& rating) {
+    os << "[평가 정보] 사용자ID: " << rating.userId 
+       << " | 영화ID: " << rating.movieId 
+       << " | 평점: " << rating.score << "/5.0";
+    return os;
 }
