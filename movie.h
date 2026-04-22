@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include <iostream> // ostream 사용을 위해 추가
+#include <iostream>
 
 class Movie {
 private:

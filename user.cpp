@@ -1,5 +1,4 @@
 #include "user.h"
-#include <iostream>
 
 User::User() : id(0), name("Unknown"), email("None") {}
 
@@ -11,7 +10,8 @@ std::string User::getName() const { return name; }
 std::string User::getEmail() const { return email; }
 
 std::ostream& operator<<(std::ostream& os, const User& user){
-    std::cout << "사용자의 ID: " << id << '\n';
-    std::cout << "사용자의 이름: " << name << '\n';
-    std::cout << "사용자의 email: " << email << '\n';
+    os << "ID: " << user.id << 
+       << " | 이름: " << user.name 
+       << " | email: " << user.email << std::endl;
+    return os;
 }

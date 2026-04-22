@@ -1,5 +1,4 @@
 #include "rating.h"
-#include <iostream>
 
 Rating::Rating() : userId(0), movieId(0), score(0.0) {}
 
@@ -21,6 +20,6 @@ double Rating::getScore() const { return score; }
 std::ostream& operator<<(std::ostream& os, const Rating& rating) {
     os << "[평가 정보] 사용자ID: " << rating.userId 
        << " | 영화ID: " << rating.movieId 
-       << " | 평점: " << rating.score << "/5.0";
+       << " | 평점: " << rating.score << "/5.0" << std::endl;
     return os;
 }
