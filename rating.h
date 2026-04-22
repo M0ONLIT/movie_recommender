@@ -13,7 +13,4 @@ public:
     int getMovieId() const;
     double getScore() const;
     void display();
-    // TODO: 생성자 (score 유효성 검사 포함)
-    //       getter, display()
-    // ⚠ score 가 0~5 범위인지 확인!
 };
