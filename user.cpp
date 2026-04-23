@@ -12,6 +12,6 @@ std::string User::getEmail() const { return email; }
 std::ostream& operator<<(std::ostream& os, const User& user){
     os << "ID: " << user.id
        << " | 이름: " << user.name
-       << " | email: " << user.email << std::endl;
+       << " | email: " << user.email;
     return os;
 }

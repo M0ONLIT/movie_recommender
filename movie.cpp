@@ -42,6 +42,6 @@ std::ostream& operator<<(std::ostream& os, const Movie& movie) {
     os << movie.id << ". " << movie.title
        << " (" << movie.releaseYear << ")"
        << "  평점: " << movie.getAverageRating()
-       << " (" << movie.ratingCount << "건)" << std::endl;
+       << " (" << movie.ratingCount << "건)";
     return os;
 }

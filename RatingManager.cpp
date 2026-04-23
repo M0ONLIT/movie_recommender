@@ -20,6 +20,7 @@ void RatingManager::printRatingsByMovie(int mId) const {
     bool found = false;
     for (const auto& r : ratings) {
         if (r.getMovieId() == mId) {
+            std::cout << r << std::endl;
             found = true;
         }
     }
