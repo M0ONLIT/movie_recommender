@@ -1,13 +1,33 @@
 #include "movie.h"
 #include "rating.h"
 #include "user.h"
+#include "MovieManager.h"
+#include "UserManager.h"
+#include "RatingManager.h"
 
 #include <iostream>
 #include <vector>
 #include <string>
 #include <algorithm>
-
+#include <limits>
 using namespace std;
+
+
+template <typename T>
+void getInput(T &x) {
+    while (true) {
+        std::cin >> x;
+
+        if (std::cin.fail()) {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "잘못된 형식입니다. 다시 입력해 주세요.\n";
+        } else {
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            break;
+        }
+    }
+}
 
 void showMenu() {
     cout << "\n=== Movie Recommender ===\n\n";
@@ -27,100 +47,63 @@ void showMenu() {
 }
 
 int main() {
-    vector<Movie> movies;
-    vector<User> users;
-    vector<Rating> ratings;
+    MovieManager mm;
+    UserManager um;
+    RatingManager rm;
 
     int choice;
     while (true) {
         showMenu();
-        cin >> choice;
+        getInput(choice);
 
         if (choice == 0) break;
 
         switch (choice) {
-            case 1: { // 영화 추가
+            case 1: {
                 int id, year;
                 string title, genre;
-                cout << "ID: "; cin >> id;
-                cin.ignore(); // 버퍼 비우기
+                cout << "ID: "; getInput(id);
                 cout << "제목: "; getline(cin, title);
                 cout << "장르: "; getline(cin, genre);
-                cout << "개봉연도: "; cin >> year;
-                movies.push_back(Movie(id, title, genre, year));
+                cout << "개봉연도: "; getInput(year);
+                mm.addMovie(id, title, genre, year);
                 break;
             }
-            case 2: { // 제목으로 검색
+            case 2: {
                 string title;
-                cout << "검색할 제목: ";
-                cin.ignore();
-                getline(cin, title);
-                bool found = false;
-                for (const auto& m : movies) {
-                    if (m.getTitle().find(title) != string::npos) {
-                        cout << m << endl;
-                        found = true;
-                    }
-                }
-                if (!found) cout << "검색 결과가 없습니다.\n";
+                cout << "검색할 제목: "; getline(cin, title);
+                mm.searchByTitle(title);
                 break;
             }
-            case 3: // 전체 목록 출력
-                for (const auto& m : movies) cout << m << endl;
-                break;
-            case 4: { // 평점순 정렬 출력
-                vector<Movie> sortedMovies = movies;
-                // Movie 클래스에 정의한 operator< 활용 (평점 기준)
-                // 내림차순(높은 평점순) 정렬을 위해 greater 사용
-                sort(sortedMovies.begin(), sortedMovies.end());
-                reverse(sortedMovies.begin(), sortedMovies.end()); 
-                for (const auto& m : sortedMovies) cout << m;
-                break;
-            }
-            case 5: { // 사용자 추가
+            case 3: mm.printAllMovies(); break;
+            case 4: mm.printSortedMovies(); break;
+            case 5: {
                 int id;
                 string name, email;
-                cout << "ID: "; cin >> id;
-                cin.ignore();
+                cout << "ID: "; getInput(id);
                 cout << "이름: "; getline(cin, name);
                 cout << "이메일: "; getline(cin, email);
-                users.push_back(User(id, name, email));
+                um.addUser(id, name, email);
                 break;
             }
-            case 6: // 사용자 목록 출력
-                for (const auto& u : users) cout << u;
-                break;
-            case 7: { // 평점 입력
+            case 6: um.printAllUsers(); break;
+            case 7: {
                 int uId, mId;
                 double score;
-                cout << "사용자 ID: "; cin >> uId;
-                cout << "영화 ID: "; cin >> mId;
-                cout << "평점(0-5): "; cin >> score;
-
-                // 1. 평점 리스트에 추가
-                ratings.push_back(Rating(uId, mId, score));
-                
-                // 2. 실제 영화 객체의 평균 평점 업데이트
-                for (auto& m : movies) {
-                    if (m.getId() == mId) {
-                        m.addRating(score);
-                        break;
-                    }
-                }
+                cout << "사용자 ID: "; getInput(uId);
+                cout << "영화 ID: "; getInput(mId);
+                cout << "평점(0-5): "; getInput(score);
+                rm.addRating(uId, mId, score, mm, um);
                 break;
             }
-            case 8: { // 영화별 평점 보기
+            case 8: {
                 int mId;
-                cout << "영화 ID: "; cin >> mId;
-                for (const auto& r : ratings) {
-                    if (r.getMovieId() == mId) cout << r << endl;
-                }
+                cout << "영화 ID: "; getInput(mId);
+                rm.printRatingsByMovie(mId);
                 break;
             }
-            default:
-                cout << "잘못된 선택입니다.\n";
+            default: cout << "잘못된 메뉴 선택입니다.\n";
         }
     }
-
     return 0;
 }
