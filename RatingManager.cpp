@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <algorithm>
 
 void RatingManager::addRating(int uId, int mId, double score, MovieManager& mm, UserManager& um) {
     ratings.push_back(Rating(uId, mId, score));
@@ -27,6 +28,27 @@ void RatingManager::printRatingsByMovie(int mId) const {
         }
     }
     if (!found) std::cout << "해당 영화에 대한 평점 기록이 없습니다.\n";
+}
+
+std::vector<Rating> RatingManager::findByUser(int uId) {
+    std::vector<Rating> result;
+    for (const auto& r : ratings) {
+        if (r.getUserId() == uId) {
+            result.push_back(r);
+        }
+    }
+    return result;
+}
+
+std::vector<int> RatingManager::getAllUserIds() const {
+    std::vector<int> ids;
+    for (const auto& r : ratings) {
+        int uid = r.getUserId();
+        if (std::find(ids.begin(), ids.end(), uid) == ids.end()) {
+            ids.push_back(uid);
+        }
+    }
+    return ids;
 }
 
 void RatingManager::loadRatings(const std::string& filename, MovieManager& mm, UserManager& um) {

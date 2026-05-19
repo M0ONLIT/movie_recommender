@@ -4,6 +4,9 @@
 #include "MovieManager.h"
 #include "UserManager.h"
 #include "RatingManager.h"
+#include "SimilarityCalculator.h"
+
+#include <windows.h>
 
 #include <iostream>
 #include <vector>
@@ -46,6 +49,7 @@ void showMenu() {
     cout << "선택 > ";
 }
 
+/*
 int main() {
     MovieManager mm;
     UserManager um;
@@ -113,5 +117,42 @@ int main() {
     mm.saveMovies("./data/movie.csv");
     um.saveUsers("./data/user.csv");
     rm.saveRatings("./data/rating.csv");
+    return 0;
+}
+*/
+
+int main() {
+    SetConsoleOutputCP(CP_UTF8);
+    SetConsoleCP(CP_UTF8);
+    MovieManager mm;
+    UserManager um;
+    RatingManager mgr;
+
+    mm.loadMovies("./data/movie.csv");
+    um.loadUsers("./data/user.csv");
+    mgr.loadRatings("./data/rating.csv", mm, um);
+
+    int targetUserId = 1;
+    std::vector<Rating> myRatings = mgr.findByUser(targetUserId);
+
+    int bestUser = -1;
+    int bestSim = -101;
+
+    for (int otherId : mgr.getAllUserIds()) {
+        if (otherId == targetUserId) continue;
+
+        std::vector<Rating> otherRatings = mgr.findByUser(otherId);
+        int sim = SimilarityCalculator::calculate(myRatings, otherRatings);
+
+        if (sim > bestSim) {
+            bestSim = sim;
+            bestUser = otherId;
+        }
+    }
+
+    std::cout << "User " << targetUserId
+              << "와 가장 비슷한 사용자: User " << bestUser
+              << " (유사도 " << bestSim << ")" << std::endl;
+
     return 0;
 }
