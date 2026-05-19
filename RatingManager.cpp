@@ -4,7 +4,9 @@
 #include <sstream>
 #include <algorithm>
 
-void RatingManager::addRating(int uId, int mId, double score, MovieManager& mm, UserManager& um) {
+RatingManager::RatingManager(MovieManager& mm, UserManager& um): mm(mm), um(um) {}
+
+void RatingManager::addRating(int uId, int mId, double score) {
     ratings.push_back(Rating(uId, mId, score));
 
     Movie* target = mm.findMovieById(mId);
@@ -51,7 +53,7 @@ std::vector<int> RatingManager::getAllUserIds() const {
     return ids;
 }
 
-void RatingManager::loadRatings(const std::string& filename, MovieManager& mm, UserManager& um) {
+void RatingManager::loadFromFile(const std::string& filename) {
     std::ifstream file(filename);
 
     if (!file.is_open()) {
@@ -90,7 +92,7 @@ void RatingManager::loadRatings(const std::string& filename, MovieManager& mm, U
     std::cout << filename << " 로드 완료: " << ratings.size() << "건" << std::endl;
 }
 
-void RatingManager::saveRatings(const std::string& filename) const {
+void RatingManager::saveToFile(const std::string& filename) const {
     std::ofstream file(filename);
     if (!file.is_open()) {
         std::cerr << "Error: " << filename << " 파일을 열 수 없습니다." << std::endl;

@@ -32,7 +32,7 @@ void MovieManager::printSortedMovies() const {
 }
 
 // 1. 영화 데이터 불러오기
-void MovieManager::loadMovies(const std::string& filename) {
+void MovieManager::loadFromFile(const std::string& filename) {
     std::ifstream file(filename);
 
     if (!file.is_open()) {
@@ -62,7 +62,7 @@ void MovieManager::loadMovies(const std::string& filename) {
     std::cout << filename << " 로드 완료: " << movies.size() << "건" << std::endl;
 }
 
-void MovieManager::saveMovies(const std::string& filename) const {
+void MovieManager::saveToFile(const std::string& filename) const {
     std::ofstream file(filename);
 
     if (!file.is_open()) {

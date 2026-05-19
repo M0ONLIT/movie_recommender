@@ -3,18 +3,22 @@
 #include "rating.h"
 #include "MovieManager.h"
 #include "UserManager.h"
+#include "BaseManager.h"
 
-class RatingManager {
+class RatingManager : public BaseManager {
 private:
     std::vector<Rating> ratings;
+    MovieManager& mm;
+    UserManager& um;
 
 public:
-    // MovieManager를 인자로 받아 영화 평점까지 업데이트합니다.
-    void addRating(int uId, int mId, double score, MovieManager& mm, UserManager& um);
+    RatingManager(MovieManager& mm, UserManager& um);
+
+    void addRating(int uId, int mId, double score);
     void printRatingsByMovie(int mId) const;
     std::vector<Rating> findByUser(int uId);
     std::vector<int> getAllUserIds() const;
 
-    void loadRatings(const std::string& filename, MovieManager& mm, UserManager& um);
-    void saveRatings(const std::string& filename) const;
+    void loadFromFile(const std::string& filename) override;
+    void saveToFile(const std::string& filename) const override;
 };

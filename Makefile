@@ -21,13 +21,13 @@ user.o: user.cpp user.h
 rating.o: rating.cpp rating.h
 	$(CXX) $(CXXFLAGS) -c $<
 
-MovieManager.o: MovieManager.cpp MovieManager.h movie.h
+MovieManager.o: MovieManager.cpp MovieManager.h BaseManager.h movie.h
 	$(CXX) $(CXXFLAGS) -c $<
 
-UserManager.o: UserManager.cpp UserManager.h user.h
+UserManager.o: UserManager.cpp UserManager.h BaseManager.h user.h
 	$(CXX) $(CXXFLAGS) -c $<
 
-RatingManager.o: RatingManager.cpp RatingManager.h rating.h MovieManager.h
+RatingManager.o: RatingManager.cpp RatingManager.h BaseManager.h rating.h MovieManager.h UserManager.h
 	$(CXX) $(CXXFLAGS) -c $<
 
 SimilarityCalculator.o: SimilarityCalculator.cpp SimilarityCalculator.h rating.h

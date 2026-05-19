@@ -18,7 +18,7 @@ User* UserManager::findUserById(int id) {
     return nullptr;
 }
 
-void UserManager::loadUsers(const std::string& filename) {
+void UserManager::loadFromFile(const std::string& filename) {
     std::ifstream file(filename);
 
     if (!file.is_open()) {
@@ -46,7 +46,7 @@ void UserManager::loadUsers(const std::string& filename) {
     std::cout << filename << " 로드 완료: " << users.size() << "건" << std::endl;
 }
 
-void UserManager::saveUsers(const std::string& filename) const {
+void UserManager::saveToFile(const std::string& filename) const {
     std::ofstream file(filename);
     if (!file.is_open()) {
         std::cerr << "Error: " << filename << " 파일을 열 수 없습니다." << std::endl;

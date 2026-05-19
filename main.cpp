@@ -49,15 +49,15 @@ void showMenu() {
     cout << "선택 > ";
 }
 
-/*
+
 int main() {
     MovieManager mm;
     UserManager um;
-    RatingManager rm;
+    RatingManager rm(mm, um);
 
-    mm.loadMovies("./data/movie.csv");
-    um.loadUsers("./data/user.csv");
-    rm.loadRatings("./data/rating.csv", mm, um);
+    mm.loadFromFile("./data/movie.csv");
+    um.loadFromFile("./data/user.csv");
+    rm.loadFromFile("./data/rating.csv");
 
     int choice;
     while (true) {
@@ -101,7 +101,7 @@ int main() {
                 cout << "사용자 ID: "; getInput(uId);
                 cout << "영화 ID: "; getInput(mId);
                 cout << "평점(0-5): "; getInput(score);
-                rm.addRating(uId, mId, score, mm, um);
+                rm.addRating(uId, mId, score);
                 break;
             }
             case 8: {
@@ -114,23 +114,23 @@ int main() {
         }
     }
 
-    mm.saveMovies("./data/movie.csv");
-    um.saveUsers("./data/user.csv");
-    rm.saveRatings("./data/rating.csv");
+    mm.saveToFile("./data/movie.csv");
+    um.saveToFile("./data/user.csv");
+    rm.saveToFile("./data/rating.csv");
     return 0;
 }
-*/
+/*
 
 int main() {
     SetConsoleOutputCP(CP_UTF8);
     SetConsoleCP(CP_UTF8);
     MovieManager mm;
     UserManager um;
-    RatingManager mgr;
+    RatingManager mgr(mm, um);
 
-    mm.loadMovies("./data/movie.csv");
-    um.loadUsers("./data/user.csv");
-    mgr.loadRatings("./data/rating.csv", mm, um);
+    mm.loadFromFile("./data/movie.csv");
+    um.loadFromFile("./data/user.csv");
+    mgr.loadFromFile("./data/rating.csv");
 
     int targetUserId = 1;
     std::vector<Rating> myRatings = mgr.findByUser(targetUserId);
@@ -156,3 +156,4 @@ int main() {
 
     return 0;
 }
+*/

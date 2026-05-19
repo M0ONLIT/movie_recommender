@@ -2,8 +2,9 @@
 #include <vector>
 #include <string>
 #include "movie.h"
+#include "BaseManager.h"
 
-class MovieManager {
+class MovieManager : public BaseManager {
 private:
     std::vector<Movie> movies;
 
@@ -14,9 +15,8 @@ public:
     void printAllMovies() const;
     void printSortedMovies() const;
 
-    //9주차
-    void loadMovies(const std::string& filename);
-    void saveMovies(const std::string& filename) const;
+    void loadFromFile(const std::string& filename) override;
+    void saveToFile(const std::string& filename) const override;
 
     Movie* findMovieById(int id);
 };
