@@ -13,6 +13,6 @@ public:
     int         getId()              const;
     std::string getName()            const;
     std::string getEmail()           const;
-    friend std::ostream& operator<<(std::ostream& os, const User& user);
     
+    friend std::ostream& operator<<(std::ostream& os, const User& user);
 };

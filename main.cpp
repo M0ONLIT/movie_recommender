@@ -51,6 +51,10 @@ int main() {
     UserManager um;
     RatingManager rm;
 
+    mm.loadMovies("./data/movie.csv");
+    um.loadUsers("./data/user.csv");
+    rm.loadRatings("./data/rating.csv", mm, um);
+
     int choice;
     while (true) {
         showMenu();
@@ -105,5 +109,9 @@ int main() {
             default: cout << "잘못된 메뉴 선택입니다.\n";
         }
     }
+
+    mm.saveMovies("./data/movie.csv");
+    um.saveUsers("./data/user.csv");
+    rm.saveRatings("./data/rating.csv");
     return 0;
 }

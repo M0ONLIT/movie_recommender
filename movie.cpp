@@ -35,7 +35,9 @@ void Movie::addRating(double r) {
 }
 
 bool Movie::operator<(const Movie& other) const {
-    return this->getAverageRating() < other.getAverageRating();
+    if (this->getAverageRating() == other.getAverageRating())
+        return this->getId() < other.getId();
+    return this->getAverageRating() > other.getAverageRating();
 }
 
 std::ostream& operator<<(std::ostream& os, const Movie& movie) {

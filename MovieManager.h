@@ -13,6 +13,10 @@ public:
     void searchByTitle(const std::string& title) const;
     void printAllMovies() const;
     void printSortedMovies() const;
-    
+
+    //9주차
+    void loadMovies(const std::string& filename);
+    void saveMovies(const std::string& filename) const;
+
     Movie* findMovieById(int id);
 };
