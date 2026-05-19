@@ -37,7 +37,7 @@ Recommender.o: Recommender.cpp Recommender.h MovieManager.h UserManager.h Rating
 .PHONY: clean run
 
 clean:
-	del -f $(OBJS) $(TARGET)
+	rm -f $(OBJS) $(TARGET)
 
 run: $(TARGET)
 	./$(TARGET)

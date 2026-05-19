@@ -6,7 +6,7 @@
 #include "RatingManager.h"
 #include "Recommender.h"
 
-#include <windows.h>
+// #include <windows.h>  // Windows 전용 (리눅스 채점용 비활성화)
 
 #include <iostream>
 #include <vector>
@@ -52,8 +52,8 @@ void showMenu() {
 
 
 int main() {
-    SetConsoleOutputCP(CP_UTF8);
-    SetConsoleCP(CP_UTF8);
+    // SetConsoleOutputCP(CP_UTF8);
+    // SetConsoleCP(CP_UTF8);
     MovieManager mm;
     UserManager um;
     RatingManager rm(mm, um);
@@ -144,8 +144,8 @@ int main() {
 /*
 
 int main() {
-    SetConsoleOutputCP(CP_UTF8);
-    SetConsoleCP(CP_UTF8);
+    // SetConsoleOutputCP(CP_UTF8);
+    // SetConsoleCP(CP_UTF8);
     MovieManager mm;
     UserManager um;
     RatingManager mgr(mm, um);

@@ -108,6 +108,40 @@ double Recommender::distance(int userId1, int userId2) const {
     return scoreDiffSum / commonCount;
 }
 
+/*
+ * Recommender::recommend(userId) — 영화 추천 (최대 3편, 0편일 수 있음)
+ *
+ * [전제]
+ * - 유저 = 그래프의 노드. 두 유저가 같은 영화를 본 적 있으면 간선이 있고,
+ *   간선 가중치 = distance(u, v) (공통 영화 평점 차의 평균, 작을수록 비슷함).
+ * - 서로 다른 연결 요소(분리된 집합)는 합치지 않음.
+ *
+ * [1] 대상 유저(userId)가 본 영화가 하나도 없으면 → 빈 벡터 반환.
+ *
+ * [2] seenByTarget: 대상 유저가 이미 평가한 movieId 집합.
+ *     이후 후보에서 제외 (아직 보지 않은 영화만 추천).
+ *
+ * [3] 유저 그래프 구성 (buildUserGraph)
+ *     - 모든 유저 쌍에 대해 distance() 호출.
+ *     - 공통 영화가 없으면 간선 없음 (INF).
+ *     - 있으면 양방향 간선, 가중치 = distance 값.
+ *
+ * [4] 다익스트라 (dijkstra)로 userId에서 각 유저까지 최단 거리 userDist 계산.
+ *     - 직접 겹치는 영화가 없어도 중간 유저를 거치면 거리 정의 가능.
+ *     - 도달 불가(INF)인 유저는 추천 가중치에 쓰지 않음.
+ *
+ * [5] userDist 기준으로 다른 유저 중 하나라도 도달 가능하지 않으면 → 빈 벡터.
+ *
+ * [6] 영화별 점수 movieScores (대상이 아직 안 본 영화만)
+ *     - 도달 가능한 다른 유저 i, i가 준 영화 j에 대해:
+ *       movieScores[j] += (1 / (userDist[i] + 1)) * (i의 j 평점)
+ *     - 가까운 유저(거리 작음)일수록 가중치 1/(거리+1)이 커져 더 많이 반영.
+ *
+ * [7] 최종 점수 및 정렬
+ *     - 영화 j의 점수 = movieScores[j] * (2 - e^(1 - review_count(j)))
+ *     - review_count(j): 시스템 전체에서 j에 달린 리뷰 개수.
+ *     - 점수 내림차순 정렬 후 상위 최대 3개 movieId를 MovieManager에서 찾아 반환.
+ */
 std::vector<Movie> Recommender::recommend(int userId) const {
     const std::vector<Rating> targetRatings = rm.findByUser(userId);
     if (targetRatings.empty()) {
