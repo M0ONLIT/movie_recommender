@@ -16,7 +16,7 @@ public:
 
     void addRating(int uId, int mId, double score);
     void printRatingsByMovie(int mId) const;
-    std::vector<Rating> findByUser(int uId);
+    std::vector<Rating> findByUser(int uId) const;
     std::vector<int> getAllUserIds() const;
 
     void loadFromFile(const std::string& filename) override;

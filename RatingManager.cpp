@@ -32,7 +32,7 @@ void RatingManager::printRatingsByMovie(int mId) const {
     if (!found) std::cout << "해당 영화에 대한 평점 기록이 없습니다.\n";
 }
 
-std::vector<Rating> RatingManager::findByUser(int uId) {
+std::vector<Rating> RatingManager::findByUser(int uId) const {
     std::vector<Rating> result;
     for (const auto& r : ratings) {
         if (r.getUserId() == uId) {

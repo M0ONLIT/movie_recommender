@@ -4,7 +4,7 @@
 #include "MovieManager.h"
 #include "UserManager.h"
 #include "RatingManager.h"
-#include "SimilarityCalculator.h"
+#include "Recommender.h"
 
 #include <windows.h>
 
@@ -44,16 +44,20 @@ void showMenu() {
     cout << "  6. 사용자 목록 출력\n\n";
     cout << "[ 평점 ]\n";
     cout << "  7. 평점 입력\n";
-    cout << "  8. 영화별 평점 보기\n\n";
+    cout << "  8. 영화별 평점 보기\n";
+    cout << "  9. 영화 추천받기\n\n";
     cout << "  0. 종료\n\n";
     cout << "선택 > ";
 }
 
 
 int main() {
+    SetConsoleOutputCP(CP_UTF8);
+    SetConsoleCP(CP_UTF8);
     MovieManager mm;
     UserManager um;
     RatingManager rm(mm, um);
+    Recommender rec(mm, um, rm);
 
     mm.loadFromFile("./data/movie.csv");
     um.loadFromFile("./data/user.csv");
@@ -108,6 +112,24 @@ int main() {
                 int mId;
                 cout << "영화 ID: "; getInput(mId);
                 rm.printRatingsByMovie(mId);
+                break;
+            }
+            case 9: {
+                int uid;
+                cout << "사용자 ID: "; getInput(uid);
+                if (um.findUserById(uid) == nullptr) {
+                    cout << "해당 ID의 사용자가 존재하지 않습니다.\n";
+                    break;
+                }
+                const vector<Movie> recommended = rec.recommend(uid);
+                if (recommended.empty()) {
+                    cout << "추천할 영화가 없습니다.\n";
+                } else {
+                    cout << "추천 영화:\n";
+                    for (const Movie& movie : recommended) {
+                        cout << movie << endl;
+                    }
+                }
                 break;
             }
             default: cout << "잘못된 메뉴 선택입니다.\n";

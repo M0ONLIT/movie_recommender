@@ -4,12 +4,12 @@ CXXFLAGS = -std=c++17 -Wall -g -fexec-charset=utf-8
 TARGET   = movie_app
 
 OBJS     = main.o movie.o user.o rating.o \
-           MovieManager.o UserManager.o RatingManager.o SimilarityCalculator.o
+           MovieManager.o UserManager.o RatingManager.o Recommender.o
 
 $(TARGET): $(OBJS)
 	$(CXX) $(CXXFLAGS) -o $@ $^
 
-main.o: main.cpp MovieManager.h UserManager.h RatingManager.h SimilarityCalculator.h
+main.o: main.cpp MovieManager.h UserManager.h RatingManager.h Recommender.h
 	$(CXX) $(CXXFLAGS) -c $<
 
 movie.o: movie.cpp movie.h
@@ -30,7 +30,7 @@ UserManager.o: UserManager.cpp UserManager.h BaseManager.h user.h
 RatingManager.o: RatingManager.cpp RatingManager.h BaseManager.h rating.h MovieManager.h UserManager.h
 	$(CXX) $(CXXFLAGS) -c $<
 
-SimilarityCalculator.o: SimilarityCalculator.cpp SimilarityCalculator.h rating.h
+Recommender.o: Recommender.cpp Recommender.h MovieManager.h UserManager.h RatingManager.h movie.h rating.h
 	$(CXX) $(CXXFLAGS) -c $<
 
 # 유틸리티 타겟
