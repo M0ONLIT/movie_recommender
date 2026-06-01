@@ -15,6 +15,22 @@
 #include <limits>
 using namespace std;
 
+enum class Operation {
+    EXIT = 0,
+
+    ADD_MOVIE = 1,
+    SEARCH_MOVIE_WITH_TITLE = 2,
+    PRINT_ALL_MOVIES = 3,
+    PRINT_SORTED_MOVIES = 4,
+
+    ADD_USER = 5,
+    PRINT_ALL_USERS = 6,
+    
+    ADD_MOVIE_RATING = 7,
+    CHECK_MOVIE_RATING = 8,
+    RECOMMEND_MOVIES = 9
+};
+
 
 template <typename T>
 void getInput(T &x) {
@@ -67,11 +83,12 @@ int main() {
     while (true) {
         showMenu();
         getInput(choice);
+        Operation op = static_cast<Operation>(choice);
 
-        if (choice == 0) break;
+        if (op == Operation::EXIT) break;
 
-        switch (choice) {
-            case 1: {
+        switch (op) {
+            case Operation::ADD_MOVIE: {
                 int id, year;
                 string title, genre;
                 cout << "ID: "; getInput(id);
@@ -81,15 +98,21 @@ int main() {
                 mm.addMovie(id, title, genre, year);
                 break;
             }
-            case 2: {
+            case Operation::SEARCH_MOVIE_WITH_TITLE: {
                 string title;
                 cout << "검색할 제목: "; getline(cin, title);
                 mm.searchByTitle(title);
                 break;
             }
-            case 3: mm.printAllMovies(); break;
-            case 4: mm.printSortedMovies(); break;
-            case 5: {
+            case Operation::PRINT_ALL_MOVIES: 
+                mm.printAllMovies(); 
+                break;
+                
+            case Operation::PRINT_SORTED_MOVIES: 
+                mm.printSortedMovies(); 
+                break;
+                
+            case Operation::ADD_USER: {
                 int id;
                 string name, email;
                 cout << "ID: "; getInput(id);
@@ -98,8 +121,11 @@ int main() {
                 um.addUser(id, name, email);
                 break;
             }
-            case 6: um.printAllUsers(); break;
-            case 7: {
+            case Operation::PRINT_ALL_USERS: 
+                um.printAllUsers(); 
+                break;
+                
+            case Operation::ADD_MOVIE_RATING: {
                 int uId, mId;
                 double score;
                 cout << "사용자 ID: "; getInput(uId);
@@ -108,13 +134,13 @@ int main() {
                 rm.addRating(uId, mId, score);
                 break;
             }
-            case 8: {
+            case Operation::CHECK_MOVIE_RATING: {
                 int mId;
                 cout << "영화 ID: "; getInput(mId);
                 rm.printRatingsByMovie(mId);
                 break;
             }
-            case 9: {
+            case Operation::RECOMMEND_MOVIES: {
                 int uid;
                 cout << "사용자 ID: "; getInput(uid);
                 if (um.findUserById(uid) == nullptr) {
@@ -132,7 +158,9 @@ int main() {
                 }
                 break;
             }
-            default: cout << "잘못된 메뉴 선택입니다.\n";
+            default: 
+                cout << "잘못된 메뉴 선택입니다.\n";
+                break;
         }
     }
 
@@ -141,41 +169,3 @@ int main() {
     rm.saveToFile("./data/rating.csv");
     return 0;
 }
-/*
-
-int main() {
-    // SetConsoleOutputCP(CP_UTF8);
-    // SetConsoleCP(CP_UTF8);
-    MovieManager mm;
-    UserManager um;
-    RatingManager mgr(mm, um);
-
-    mm.loadFromFile("./data/movie.csv");
-    um.loadFromFile("./data/user.csv");
-    mgr.loadFromFile("./data/rating.csv");
-
-    int targetUserId = 1;
-    std::vector<Rating> myRatings = mgr.findByUser(targetUserId);
-
-    int bestUser = -1;
-    int bestSim = -101;
-
-    for (int otherId : mgr.getAllUserIds()) {
-        if (otherId == targetUserId) continue;
-
-        std::vector<Rating> otherRatings = mgr.findByUser(otherId);
-        int sim = SimilarityCalculator::calculate(myRatings, otherRatings);
-
-        if (sim > bestSim) {
-            bestSim = sim;
-            bestUser = otherId;
-        }
-    }
-
-    std::cout << "User " << targetUserId
-              << "와 가장 비슷한 사용자: User " << bestUser
-              << " (유사도 " << bestSim << ")" << std::endl;
-
-    return 0;
-}
-*/

@@ -1,6 +1,12 @@
 #include "user.h"
 
-User::User() : id(0), name("Unknown"), email("None") {}
+namespace {
+    constexpr int kDefaultId = 0;
+    constexpr string kDefaultname = "Unknown";
+    constexpr string kDefaultEmail = "None";    
+}
+
+User::User() : id(kDefaultId), name(kDefaultname), email(kDefaultEmail) {}
 
 User::User(int id, const std::string &name, const std::string &email) 
     : id(id), name(name), email(email) {}

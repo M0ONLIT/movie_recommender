@@ -5,7 +5,7 @@ class Rating {
 private:
     int     userId;    // 평가한 사용자
     int     movieId;   // 평가 대상 영화
-    double  score;     // 0.0 ~ 5.0
+    double  score;
 
 public:
     Rating();

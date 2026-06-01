@@ -1,25 +1,35 @@
 #include "rating.h"
 
-Rating::Rating() : userId(0), movieId(0), score(0.0) {}
+namespace {
 
-Rating::Rating(int userId, int movieId, double score) 
+constexpr int kDefaultUserId = 0;
+constexpr int kDefaultMovieId = 0;
+constexpr double kDefaultScore = 0.0;
+
+constexpr double kMinRatingScore = 0.0;
+constexpr double kMaxRatingScore = 5.0;
+
+}  // namespace
+
+Rating::Rating()
+    : userId(kDefaultUserId), movieId(kDefaultMovieId), score(kDefaultScore) {}
+
+Rating::Rating(int userId, int movieId, double score)
     : userId(userId), movieId(movieId) {
-    
-    if (score < 0.0 || score > 5.0) {
-        this->score = 0.0;
+    if (score < kMinRatingScore || score > kMaxRatingScore) {
+        this->score = kDefaultScore;
     } else {
         this->score = score;
     }
 }
 
-// Getter 함수들
 int Rating::getUserId() const { return userId; }
 int Rating::getMovieId() const { return movieId; }
 double Rating::getScore() const { return score; }
 
 std::ostream& operator<<(std::ostream& os, const Rating& rating) {
-    os << "[평가 정보] 사용자ID: " << rating.userId 
-       << " | 영화ID: " << rating.movieId 
-       << " | 평점: " << rating.score << "/5.0";
+    os << "[평가 정보] 사용자ID: " << rating.userId
+       << " | 영화ID: " << rating.movieId
+       << " | 평점: " << rating.score << "/" << kMaxRatingScore;
     return os;
 }

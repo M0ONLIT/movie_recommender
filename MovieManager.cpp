@@ -45,7 +45,7 @@ void MovieManager::loadFromFile(const std::string& filename) {
         std::string token;
         std::string id_str, title, genre, year_str;
         
-        getline(ss, id_str, ',');
+        getline(ss, id_str, ','); // ','는 csv 구분자이므로 리터럴로 가정한다다
         getline(ss, title, ',');
         getline(ss, genre, ',');
         getline(ss, year_str, ',');
