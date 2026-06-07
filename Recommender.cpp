@@ -108,6 +108,107 @@ double Recommender::distance(int userId1, int userId2) const {
     return scoreDiffSum / commonCount;
 }
 
+std::unordered_set<int> Recommender::getSeenMovies(int userId) const {
+    std::unordered_set<int> seenByTarget;
+    for (const Rating& rating : rm.findByUser(userId)) {
+        seenByTarget.insert(rating.getMovieId());
+    }
+    return seenByTarget;
+}
+
+bool Recommender::hasReachableUser(
+    int userId, const std::map<int, double>& userDist) const {
+    const double INF = std::numeric_limits<double>::max();
+    for (const auto& entry : userDist) {
+        if (entry.first != userId && entry.second < INF) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Recommender::matchesGenre(int movieId, const std::string& genre) const {
+    if (genre.empty()) {
+        return true;
+    }
+    const Movie* movie = mm.findMovieById(movieId);
+    return movie != nullptr && movie->getGenre() == genre;
+}
+
+std::map<int, double> Recommender::computeMovieScores(
+    int userId,
+    const std::unordered_set<int>& seenByTarget,
+    const std::map<int, double>& userDist,
+    const std::string& genre) const {
+    const double INF = std::numeric_limits<double>::max();
+    std::map<int, double> movieScores;
+
+    for (int otherId : rm.getAllUserIds()) {
+        if (otherId == userId) {
+            continue;
+        }
+
+        const auto distIt = userDist.find(otherId);
+        if (distIt == userDist.end() || distIt->second >= INF) {
+            continue;
+        }
+
+        const double userWeight = 1.0 / (distIt->second + 1.0);
+        for (const Rating& rating : rm.findByUser(otherId)) {
+            const int movieId = rating.getMovieId();
+            if (seenByTarget.count(movieId) > 0) {
+                continue;
+            }
+            if (!matchesGenre(movieId, genre)) {
+                continue;
+            }
+            movieScores[movieId] += userWeight * rating.getScore();
+        }
+    }
+
+    return movieScores;
+}
+
+std::vector<std::pair<double, int>> Recommender::buildSortedCandidates(
+    const std::map<int, double>& movieScores) const {
+    std::vector<std::pair<double, int>> candidates;
+    candidates.reserve(movieScores.size());
+
+    for (const auto& entry : movieScores) {
+        const int movieId = entry.first;
+        const int reviewCount = reviewCountForMovie(movieId, rm);
+        const double reviewFactor =
+            2.0 - std::exp(1.0 - static_cast<double>(reviewCount));
+        candidates.emplace_back(entry.second * reviewFactor, movieId);
+    }
+
+    std::sort(candidates.begin(), candidates.end(),
+              [](const auto& a, const auto& b) { return a.first > b.first; });
+    return candidates;
+}
+
+std::vector<Movie> Recommender::selectTopMovies(
+    const std::vector<std::pair<double, int>>& candidates,
+    const std::string& genre) const {
+    std::vector<Movie> result;
+    result.reserve(std::min<std::size_t>(3, candidates.size()));
+
+    for (const auto& candidate : candidates) {
+        if (result.size() >= 3) {
+            break;
+        }
+        if (!matchesGenre(candidate.second, genre)) {
+            continue;
+        }
+        Movie* movie = mm.findMovieById(candidate.second);
+        if (movie != nullptr) {
+            result.push_back(*movie);
+        }
+    }
+
+    return result;
+}
+
 /*
  * Recommender::recommend(userId) — 영화 추천 (최대 3편, 0편일 수 있음)
  *
@@ -142,77 +243,23 @@ double Recommender::distance(int userId1, int userId2) const {
  *     - review_count(j): 시스템 전체에서 j에 달린 리뷰 개수.
  *     - 점수 내림차순 정렬 후 상위 최대 3개 movieId를 MovieManager에서 찾아 반환.
  */
-std::vector<Movie> Recommender::recommend(int userId) const {
-    const std::vector<Rating> targetRatings = rm.findByUser(userId);
-    if (targetRatings.empty()) {
+std::vector<Movie> Recommender::recommend(int userId, const std::string& genre) const {
+    const std::unordered_set<int> seenByTarget = getSeenMovies(userId);
+    if (seenByTarget.empty()) {
         return {};
-    }
-
-    std::unordered_set<int> seenByTarget;
-    for (const Rating& rating : targetRatings) {
-        seenByTarget.insert(rating.getMovieId());
     }
 
     const std::vector<int> userIds = rm.getAllUserIds();
     const UserGraph graph = buildUserGraph(userIds, *this);
     const std::map<int, double> userDist = dijkstra(graph, userId);
-    const double INF = std::numeric_limits<double>::max();
-
-    bool hasReachableUser = false;
-    for (const auto& entry : userDist) {
-        if (entry.first != userId && entry.second < INF) {
-            hasReachableUser = true;
-            break;
-        }
-    }
-    if (!hasReachableUser) {
+    if (!hasReachableUser(userId, userDist)) {
         return {};
     }
 
-    std::map<int, double> movieScores;
+    const std::map<int, double> movieScores =
+        computeMovieScores(userId, seenByTarget, userDist, genre);
+    const std::vector<std::pair<double, int>> candidates =
+        buildSortedCandidates(movieScores);
 
-    for (int otherId : userIds) {
-        if (otherId == userId) {
-            continue;
-        }
-
-        const auto distIt = userDist.find(otherId);
-        if (distIt == userDist.end() || distIt->second >= INF) {
-            continue;
-        }
-
-        const double userWeight = 1.0 / (distIt->second + 1.0);
-        for (const Rating& rating : rm.findByUser(otherId)) {
-            const int movieId = rating.getMovieId();
-            if (seenByTarget.count(movieId) > 0) {
-                continue;
-            }
-            movieScores[movieId] += userWeight * rating.getScore();
-        }
-    }
-
-    std::vector<std::pair<double, int>> candidates;
-    for (const auto& entry : movieScores) {
-        const int movieId = entry.first;
-        const int reviewCount = reviewCountForMovie(movieId, rm);
-        const double reviewFactor =
-            2.0 - std::exp(1.0 - static_cast<double>(reviewCount));
-        candidates.emplace_back(entry.second * reviewFactor, movieId);
-    }
-
-    std::sort(candidates.begin(), candidates.end(),
-              [](const auto& a, const auto& b) { return a.first > b.first; });
-
-    std::vector<Movie> result;
-    const std::size_t limit = std::min<std::size_t>(3, candidates.size());
-    result.reserve(limit);
-
-    for (std::size_t i = 0; i < limit; ++i) {
-        Movie* movie = mm.findMovieById(candidates[i].second);
-        if (movie != nullptr) {
-            result.push_back(*movie);
-        }
-    }
-
-    return result;
+    return selectTopMovies(candidates, genre);
 }

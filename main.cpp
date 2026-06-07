@@ -6,7 +6,7 @@
 #include "RatingManager.h"
 #include "Recommender.h"
 
-// #include <windows.h>  // Windows 전용 (리눅스 채점용 비활성화)
+#include <windows.h>  // Windows 전용 (리눅스 채점용 비활성화)
 
 #include <iostream>
 #include <vector>
@@ -68,8 +68,10 @@ void showMenu() {
 
 
 int main() {
-    // SetConsoleOutputCP(CP_UTF8);
-    // SetConsoleCP(CP_UTF8);
+    SetConsoleOutputCP(CP_UTF8); // Windows 전용
+    SetConsoleCP(CP_UTF8); // Windows 전용
+    // mingw32-make
+
     MovieManager mm;
     UserManager um;
     RatingManager rm(mm, um);
@@ -147,7 +149,30 @@ int main() {
                     cout << "해당 ID의 사용자가 존재하지 않습니다.\n";
                     break;
                 }
-                const vector<Movie> recommended = rec.recommend(uid);
+
+                const vector<string> genres = mm.getGenreList();
+                cout << "장르를 고르시오\n";
+                cout << "0. 장르 없음\n";
+                for (size_t i = 0; i < genres.size(); ++i) {
+                    cout << (i + 1) << ". " << genres[i] << "\n";
+                }
+
+                int genreChoice;
+                cout << "선택: ";
+                getInput(genreChoice);
+
+                string genre;
+                if (genreChoice == 0) {
+                    genre = "";
+                } else if (genreChoice > 0
+                           && static_cast<size_t>(genreChoice) <= genres.size()) {
+                    genre = genres[genreChoice - 1];
+                } else {
+                    cout << "잘못된 선택입니다.\n";
+                    break;
+                }
+
+                const vector<Movie> recommended = rec.recommend(uid, genre);
                 if (recommended.empty()) {
                     cout << "추천할 영화가 없습니다.\n";
                 } else {

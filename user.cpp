@@ -2,8 +2,8 @@
 
 namespace {
     constexpr int kDefaultId = 0;
-    constexpr string kDefaultname = "Unknown";
-    constexpr string kDefaultEmail = "None";    
+    const std::string kDefaultname = "Unknown";
+    const std::string kDefaultEmail = "None";    
 }
 
 User::User() : id(kDefaultId), name(kDefaultname), email(kDefaultEmail) {}

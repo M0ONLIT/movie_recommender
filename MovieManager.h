@@ -18,4 +18,5 @@ public:
     void saveToFile(const std::string& filename) const override;
 
     Movie* findMovieById(int id);
+    std::vector<std::string> getGenreList() const;
 };

@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include <algorithm>
+#include <set>
 
 
 void MovieManager::addMovie(int id, const std::string& title, const std::string& genre, int year) {
@@ -86,4 +87,12 @@ Movie* MovieManager::findMovieById(int id) {
         if (m.getId() == id) return &m;
     }
     return nullptr;
+}
+
+std::vector<std::string> MovieManager::getGenreList() const {
+    std::set<std::string> genreSet;
+    for (const auto& m : movies) {
+        genreSet.insert(m.getGenre());
+    }
+    return std::vector<std::string>(genreSet.begin(), genreSet.end());
 }

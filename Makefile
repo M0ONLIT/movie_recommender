@@ -1,7 +1,24 @@
-
 CXX      = g++
 CXXFLAGS = -std=c++17 -Wall -g -fexec-charset=utf-8
-TARGET   = movie_app
+
+# 실행 파일의 기본 이름 설정
+TARGET_NAME = movie_app
+
+# ==========================================
+# OS 자동 감지 및 플랫폼별 변수 할당
+# ==========================================
+ifeq ($(OS),Windows_NT)
+    # 윈도우 환경
+    TARGET  = $(TARGET_NAME).exe
+    RM      = del /Q
+    RUN_CMD = $(TARGET)
+else
+    # 리눅스 / macOS 환경
+    TARGET  = $(TARGET_NAME)
+    RM      = rm -f
+    RUN_CMD = ./$(TARGET)
+endif
+# ==========================================
 
 OBJS     = main.o movie.o user.o rating.o \
            MovieManager.o UserManager.o RatingManager.o Recommender.o
@@ -37,7 +54,7 @@ Recommender.o: Recommender.cpp Recommender.h MovieManager.h UserManager.h Rating
 .PHONY: clean run
 
 clean:
-	rm -f $(OBJS) $(TARGET)
+	-$(RM) $(OBJS) $(TARGET)
 
 run: $(TARGET)
-	./$(TARGET)
+	$(RUN_CMD)
