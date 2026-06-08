@@ -68,18 +68,6 @@ std::map<int, double> dijkstra(const UserGraph& graph, int source) {
     return dist;
 }
 
-int reviewCountForMovie(int movieId, const RatingManager& rm) {
-    int count = 0;
-    for (int userId : rm.getAllUserIds()) {
-        for (const Rating& rating : rm.findByUser(userId)) {
-            if (rating.getMovieId() == movieId) {
-                ++count;
-            }
-        }
-    }
-    return count;
-}
-
 }  // namespace
 
 Recommender::Recommender(MovieManager& mm, UserManager& um, RatingManager& rm)
@@ -176,7 +164,7 @@ std::vector<std::pair<double, int>> Recommender::buildSortedCandidates(
 
     for (const auto& entry : movieScores) {
         const int movieId = entry.first;
-        const int reviewCount = reviewCountForMovie(movieId, rm);
+        const int reviewCount = mm.findMovieById(movieId)->getRatingCount();
         const double reviewFactor =
             2.0 - std::exp(1.0 - static_cast<double>(reviewCount));
         candidates.emplace_back(entry.second * reviewFactor, movieId);
