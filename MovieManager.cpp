@@ -96,3 +96,19 @@ std::vector<std::string> MovieManager::getGenreList() const {
     }
     return std::vector<std::string>(genreSet.begin(), genreSet.end());
 }
+
+std::map<std::string, double> MovieManager::getAverageRatingByGenre() const {
+    std::map<std::string, double> sumByGenre;
+    std::map<std::string, int> countByGenre;
+
+    for (const auto& movie : movies) {
+        sumByGenre[movie.getGenre()] += movie.getAverageRating();
+        countByGenre[movie.getGenre()]++;
+    }
+
+    std::map<std::string, double> avgByGenre;
+    for (const auto& [genre, sum] : sumByGenre) {
+        avgByGenre[genre] = sum / countByGenre[genre];
+    }
+    return avgByGenre;
+}

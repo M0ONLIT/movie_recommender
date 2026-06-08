@@ -1,4 +1,5 @@
 #pragma once
+#include <map>
 #include <vector>
 #include <string>
 #include "movie.h"
@@ -19,4 +20,5 @@ public:
 
     Movie* findMovieById(int id);
     std::vector<std::string> getGenreList() const;
+    std::map<std::string, double> getAverageRatingByGenre() const;
 };
