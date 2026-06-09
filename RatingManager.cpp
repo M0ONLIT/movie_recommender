@@ -62,30 +62,34 @@ void RatingManager::loadFromFile(const std::string& filename) {
     }
     std::string line;
     while (getline(file, line)) {
-        std::stringstream ss(line);
-        std::string token;
-        std::string uId_str, mId_str, score_str;
+        try {
+            std::stringstream ss(line);
+            std::string token;
+            std::string uId_str, mId_str, score_str;
 
-        getline(ss, uId_str, ',');
-        getline(ss, mId_str, ',');
-        getline(ss, score_str, ',');
+            getline(ss, uId_str, ',');
+            getline(ss, mId_str, ',');
+            getline(ss, score_str, ',');
 
-        if (uId_str.empty() || mId_str.empty() || score_str.empty()) {
+            if (uId_str.empty() || mId_str.empty() || score_str.empty()) {
+                continue;
+            }
+            int uId = stoi(uId_str);
+            int mId = stoi(mId_str);
+            double score = stod(score_str);
+
+            Movie* target = mm.findMovieById(mId);
+            User* target2 = um.findUserById(uId);
+            if (target && target2) {
+                ratings.push_back(Rating(uId, mId, score));
+                target->addRating(score);
+            } else if (target2) {
+                std::cout << "오류: 해당 ID의 영화가 존재하지 않아 평점 기록이 무시됩니다. ID: " << mId << "\n";
+            } else {
+                std::cout << "오류: 해당 ID의 유저가 존재하지 않아 평점 기록이 무시됩니다. ID: " << uId << "\n";
+            }
+        } catch (...) {
             continue;
-        }
-        int uId = stoi(uId_str);
-        int mId = stoi(mId_str);
-        double score = stod(score_str);
-
-        Movie* target = mm.findMovieById(mId);
-        User* target2 = um.findUserById(uId);
-        if (target && target2) {
-            ratings.push_back(Rating(uId, mId, score));
-            target->addRating(score);
-        } else if(target2) {
-            std::cout << "오류: 해당 ID의 영화가 존재하지 않아 평점 기록이 무시됩니다. ID: " << mId << "\n";
-        } else {
-            std::cout << "오류: 해당 ID의 유저가 존재하지 않아 평점 기록이 무시됩니다. ID: " << uId << "\n";
         }
     }
     file.close();

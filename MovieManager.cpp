@@ -42,21 +42,25 @@ void MovieManager::loadFromFile(const std::string& filename) {
     }
     std::string line;
     while (getline(file, line)) {
-        std::stringstream ss(line);
-        std::string token;
-        std::string id_str, title, genre, year_str;
-        
-        getline(ss, id_str, ','); // ','는 csv 구분자이므로 리터럴로 가정한다다
-        getline(ss, title, ',');
-        getline(ss, genre, ',');
-        getline(ss, year_str, ',');
+        try {
+            std::stringstream ss(line);
+            std::string token;
+            std::string id_str, title, genre, year_str;
 
-        if (id_str.empty() || title.empty() || genre.empty() || year_str.empty()) {
-            continue; 
+            getline(ss, id_str, ','); // ','는 csv 구분자이므로 리터럴로 가정한다다
+            getline(ss, title, ',');
+            getline(ss, genre, ',');
+            getline(ss, year_str, ',');
+
+            if (id_str.empty() || title.empty() || genre.empty() || year_str.empty()) {
+                continue;
+            }
+            int id = stoi(id_str);
+            int year = stoi(year_str);
+            addMovie(id, title, genre, year);
+        } catch (...) {
+            continue;
         }
-        int id = stoi(id_str);
-        int year = stoi(year_str);
-        addMovie(id, title, genre, year);
     }
     
     file.close();

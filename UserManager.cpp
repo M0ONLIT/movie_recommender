@@ -27,19 +27,23 @@ void UserManager::loadFromFile(const std::string& filename) {
     }
     std::string line;
     while (getline(file, line)) {
-        std::stringstream ss(line);
-        std::string token;
-        std::string id_str, name, email;
-        
-        getline(ss, id_str, ',');
-        getline(ss, name, ',');
-        getline(ss, email, ',');
+        try {
+            std::stringstream ss(line);
+            std::string token;
+            std::string id_str, name, email;
 
-        if (id_str.empty() || name.empty() || email.empty()) {
-            continue; 
+            getline(ss, id_str, ',');
+            getline(ss, name, ',');
+            getline(ss, email, ',');
+
+            if (id_str.empty() || name.empty() || email.empty()) {
+                continue;
+            }
+            int id = stoi(id_str);
+            addUser(id, name, email);
+        } catch (...) {
+            continue;
         }
-        int id = stoi(id_str);
-        addUser(id, name, email);
     }
     
     file.close();
